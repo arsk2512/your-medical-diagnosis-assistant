@@ -110,7 +110,7 @@ export default function MedicationTrackerDemo() {
               <div>
                 <label className="block text-sm font-medium mb-1">Frequency</label>
                 <Select
-                  onValueChange={(value) => setValue("frequency", value)}
+                  onValueChange={(value: string) => setValue("frequency", value)}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select frequency" />
@@ -125,7 +125,7 @@ export default function MedicationTrackerDemo() {
               <div>
                 <label className="block text-sm font-medium mb-1">Time of Day</label>
                 <Select
-                  onValueChange={(value) => setValue("timeOfDay", value)}
+                  onValueChange={(value: string) => setValue("timeOfDay", value)}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select time of day" />
@@ -152,7 +152,7 @@ export default function MedicationTrackerDemo() {
                     defaultValue={[watch("adherence") || 0]}
                     max={100}
                     step={1}
-                    onValueChange={(value) => setValue("adherence", value[0])}
+                    onValueChange={(value: number[]) => setValue("adherence", value[0])}
                     className="w-full"
                   />
                   <span className="text-sm font-medium">{watch("adherence") || 0}%</span>

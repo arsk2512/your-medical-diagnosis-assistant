@@ -10,13 +10,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  AlertTriangle,
   Activity,
   Calendar,
   MapPin,
   ArrowRight,
 } from "lucide-react";
-import { DisclaimerBanner } from "@/components";
 import { SignIn, useUser } from "@clerk/nextjs";
 
 export default function Home() {

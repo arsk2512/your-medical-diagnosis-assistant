@@ -105,7 +105,7 @@ export default function HealthHistoryDemo() {
                 <label className="block text-sm font-medium mb-1">Type</label>
                 <Select
                   value={watch("type") || ""}
-                  onValueChange={(value) => setValue("type", value)}
+                  onValueChange={(value: string) => setValue("type", value)}
                 >
                   <SelectTrigger className="w-full">
                     <span>{watch("type") || "Select Type"}</span>

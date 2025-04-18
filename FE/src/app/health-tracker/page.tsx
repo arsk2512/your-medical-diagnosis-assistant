@@ -1,16 +1,6 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, PillIcon as Pills, FileText } from "lucide-react";
-import {
-  DisclaimerBanner,
-  HealthHistoryDemo,
-  MedicationTrackerDemo,
-} from "@/components";
+import { PillIcon as Pills, FileText } from "lucide-react";
+import { HealthHistoryDemo, MedicationTrackerDemo } from "@/components";
 
 export default function HealthTrackerPage() {
   return (
