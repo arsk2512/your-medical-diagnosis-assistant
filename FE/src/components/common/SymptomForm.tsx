@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -13,10 +13,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, MapPin } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function SymptomForm() {
+  const router = useRouter();
   const [symptoms, setSymptoms] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<null | {
@@ -24,6 +25,10 @@ export default function SymptomForm() {
     possibleCauses: string[];
     selfCare: string[];
     whenToSeek: string;
+    recommendedExpert: {
+      type: string;
+      description: string;
+    };
   }>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,6 +56,12 @@ export default function SymptomForm() {
       console.error("Error:", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFindExpert = () => {
+    if (result?.recommendedExpert) {
+      router.push(`/clinic-locator?expert=${encodeURIComponent(result.recommendedExpert.type)}`);
     }
   };
 
@@ -155,6 +166,31 @@ export default function SymptomForm() {
               <p className="text-amber-700">{result.whenToSeek}</p>
             </CardContent>
           </Card>
+
+          {result.recommendedExpert && (
+            <Card className="border-blue-200 bg-blue-50">
+              <CardHeader>
+                <CardTitle className="text-blue-800">Recommended Expert</CardTitle>
+                <CardDescription className="text-blue-700">
+                  {result.recommendedExpert.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <p className="text-lg font-semibold text-blue-900">
+                    {result.recommendedExpert.type}
+                  </p>
+                  <Button
+                    onClick={handleFindExpert}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <MapPin className="mr-2 h-4 w-4" />
+                    Find {result.recommendedExpert.type} Near Me
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
     </div>

@@ -31,7 +31,11 @@ export async function POST(req: Request) {
           "Self-care tip 2",
           "Self-care tip 3"
         ],
-        "whenToSeek": "When it is recommended to seek professional medical care."
+        "whenToSeek": "When it is recommended to seek professional medical care.",
+        "recommendedExpert": {
+          "type": "Type of medical expert (e.g., Dermatologist, Cardiologist, etc.)",
+          "description": "Brief explanation of why this expert is recommended"
+        }
       }
       
       Symptoms: ${prompt}

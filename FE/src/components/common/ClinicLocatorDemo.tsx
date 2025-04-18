@@ -1,72 +1,150 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, MapPin } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function ClinicLocatorDemo() {
+interface Location {
+  lat: number;
+  lng: number;
+}
+
+interface ClinicLocatorDemoProps {
+  userLocation: Location | null;
+  expertType?: string;
+}
+
+export default function ClinicLocatorDemo({
+  userLocation,
+  expertType,
+}: ClinicLocatorDemoProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [showMap, setShowMap] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [locationName, setLocationName] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isAutoSearch, setIsAutoSearch] = useState(!!expertType);
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-  // Ensure the query is related to healthcare
+  useEffect(() => {
+    if (userLocation) {
+      fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.lat},${userLocation.lng}&key=${apiKey}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.results && data.results[0]) {
+            const address = data.results[0].formatted_address;
+            setLocationName(address);
+
+            if (expertType) {
+              const term = `${expertType} near ${address}`;
+              setSearchTerm(term);
+            }
+          }
+        })
+        .catch((err) => {
+          console.error("Error getting location name:", err);
+          setError("Could not get location details");
+        });
+    }
+  }, [userLocation, expertType]);
+
+  useEffect(() => {
+    if (expertType && searchTerm && locationName) {
+      handleSearch(true);
+    }
+  }, [searchTerm, expertType, locationName]);
+
+  const handleSearch = (isAuto = false) => {
+    if (!searchTerm.trim()) {
+      setError("Please enter a location or allow location access");
+      return;
+    }
+
+    setLoading(true);
+    setShowMap(false);
+    setError(null);
+    setIsAutoSearch(isAuto);
+
+    // Small delay for better UX
+    setTimeout(() => {
+      setShowMap(true);
+      setLoading(false);
+    }, 500);
+  };
+
   const formatSearchQuery = (query: string) => {
-    const keywords = ["hospital", "clinic", "health center"];
+    const keywords = [
+      "hospital",
+      "clinic",
+      "health center",
+      "doctor",
+      "medical",
+    ];
     const lowerQuery = query.toLowerCase();
 
     // Check if query already contains healthcare-related words
     const containsKeyword = keywords.some((word) => lowerQuery.includes(word));
 
-    return containsKeyword ? query : `${query} hospitals & clinics`;
-  };
-
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
-      alert("Please enter a location.");
-      return;
-    }
-
-    setLoading(true);
-    setShowMap(false); // Reset map before update
-
-    setTimeout(() => {
-      setShowMap(true);
-      setLoading(false);
-    }, 500); // Small delay for better UX
+    return containsKeyword ? query : `${query} medical facilities`;
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 p-4">
-      {/* Search Input */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center">
-        <Input
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search hospitals, clinics, health centers..."
-          className="flex-1 w-full sm:w-auto"
-        />
-        <Button
-          onClick={handleSearch}
-          disabled={loading}
-          className="w-full sm:w-auto min-w-[120px]"
-        >
-          {loading ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Search className="h-4 w-4 mr-2" />
-          )}
-          {loading ? "Searching..." : "Search"}
-        </Button>
-      </div>
+    <div className="max-w-4xl mx-auto space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5" />
+            {expertType ? `Find ${expertType}` : "Find Medical Facilities"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3 items-center">
+              <Input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search for medical facilities..."
+                className="flex-1 w-full sm:w-auto"
+              />
+              <Button
+                onClick={() => handleSearch(false)}
+                disabled={loading}
+                className="w-full sm:w-auto min-w-[120px] cursor-pointer"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {isAutoSearch ? "Searching..." : "Searching..."}
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Search
+                  </>
+                )}
+              </Button>
+            </div>
 
-      {/* Display Google Map */}
-      <div className="h-[450px] w-full border rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+            {error && <div className="text-red-500 text-sm">{error}</div>}
+
+            {locationName && expertType && (
+              <div className="text-sm text-gray-600">
+                Searching near: {locationName}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="h-[450px] w-full border rounded-lg overflow-hidden bg-gray-100">
         {showMap ? (
           <iframe
-            key={searchTerm} // Forces re-render when search term changes
+            key={searchTerm}
             width="100%"
             height="100%"
             loading="lazy"
@@ -77,10 +155,15 @@ export default function ClinicLocatorDemo() {
             )}`}
           />
         ) : (
-          <p className="text-gray-600 text-center px-4">
-            Enter a location and search for hospitals, clinics, or health
-            centers.
-          </p>
+          <div className="h-full flex items-center justify-center">
+            <p className="text-gray-600 text-center px-4">
+              {userLocation
+                ? expertType
+                  ? "Searching for nearby specialists..."
+                  : "Enter a search term or wait for location-based results..."
+                : "Please allow location access or enter a location to search for medical facilities."}
+            </p>
+          </div>
         )}
       </div>
     </div>

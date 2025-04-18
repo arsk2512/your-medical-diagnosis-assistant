@@ -31,8 +31,6 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <DisclaimerBanner />
-
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">
           Health Information Assistant
@@ -119,33 +117,6 @@ export default function Home() {
           </CardFooter>
         </Card>
       </div>
-
-      <Card className="border-red-200 bg-red-50 mb-8">
-        <CardHeader>
-          <div className="flex items-start space-x-4">
-            <AlertTriangle className="h-6 w-6 text-red-500 mt-1 flex-shrink-0" />
-            <div>
-              <CardTitle className="text-red-700">
-                Important Portfolio Project Notice
-              </CardTitle>
-              <CardDescription className="text-red-600 mt-2">
-                This application is a technical demonstration only, created as a
-                portfolio project. It does not provide actual medical advice,
-                diagnoses, or treatment recommendations. The information
-                provided is for illustrative purposes only and should never be
-                used for making health decisions.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-red-600">
-            Always consult qualified healthcare professionals for any health
-            concerns. In case of emergency, contact emergency services
-            immediately.
-          </p>
-        </CardContent>
-      </Card>
 
       <div className="text-center text-sm text-muted-foreground">
         <p>

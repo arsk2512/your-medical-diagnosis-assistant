@@ -6,13 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { DisclaimerBanner, SymptomForm } from "@/components";
+import { SymptomForm } from "@/components";
 
 export default function SymptomsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <DisclaimerBanner />
-
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Symptom Information Tool</h1>
         <p className="text-muted-foreground mb-8">
