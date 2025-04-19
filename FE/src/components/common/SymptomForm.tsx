@@ -22,7 +22,7 @@ export default function SymptomForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<null | {
     generalInfo: string;
-    possibleCauses: string[];
+    possibleCauses: { cause: string; confidence: string }[];
     selfCare: string[];
     whenToSeek: string;
     recommendedExpert: {
@@ -61,7 +61,11 @@ export default function SymptomForm() {
 
   const handleFindExpert = () => {
     if (result?.recommendedExpert) {
-      router.push(`/clinic-locator?expert=${encodeURIComponent(result.recommendedExpert.type)}`);
+      router.push(
+        `/clinic-locator?expert=${encodeURIComponent(
+          result.recommendedExpert.type
+        )}`
+      );
     }
   };
 
@@ -125,16 +129,19 @@ export default function SymptomForm() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Educational Information</CardTitle>
+              <CardTitle>Possible Causes</CardTitle>
               <CardDescription>
-                Some general conditions that can sometimes be associated with
-                these types of symptoms:
+                Below are some possible causes of the symptoms along with their
+                confidence scores:
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 space-y-1">
                 {result.possibleCauses.map((cause, index) => (
-                  <li key={index}>{cause}</li>
+                  <li key={index}>
+                    <span className="font-semibold">{cause.cause}</span> -{" "}
+                    <span className="text-gray-600">{cause.confidence}</span>
+                  </li>
                 ))}
               </ul>
             </CardContent>
@@ -142,7 +149,7 @@ export default function SymptomForm() {
 
           <Card>
             <CardHeader>
-              <CardTitle>General Wellness Information</CardTitle>
+              <CardTitle>Self-Care Tips</CardTitle>
               <CardDescription>
                 General wellness practices that are often recommended:
               </CardDescription>
@@ -170,19 +177,21 @@ export default function SymptomForm() {
           {result.recommendedExpert && (
             <Card className="border-blue-200 bg-blue-50">
               <CardHeader>
-                <CardTitle className="text-blue-800">Recommended Expert</CardTitle>
+                <CardTitle className="text-blue-800">
+                  Recommended Expert
+                </CardTitle>
                 <CardDescription className="text-blue-700">
                   {result.recommendedExpert.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <p className="text-lg font-semibold text-blue-900">
                     {result.recommendedExpert.type}
                   </p>
                   <Button
                     onClick={handleFindExpert}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto"
                   >
                     <MapPin className="mr-2 h-4 w-4" />
                     Find {result.recommendedExpert.type} Near Me

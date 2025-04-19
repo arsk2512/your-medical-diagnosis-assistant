@@ -22,9 +22,18 @@ export async function POST(req: Request) {
       {
         "generalInfo": "General information about the symptoms.",
         "possibleCauses": [
-          "Cause 1",
-          "Cause 2",
-          "Cause 3"
+          {
+            "cause": "Cause 1",
+            "confidence": "Confidence score for this cause (e.g., 85%)"
+          },
+          {
+            "cause": "Cause 2",
+            "confidence": "Confidence score for this cause (e.g., 70%)"
+          },
+          {
+            "cause": "Cause 3",
+            "confidence": "Confidence score for this cause (e.g., 60%)"
+          }
         ],
         "selfCare": [
           "Self-care tip 1",
